@@ -1,0 +1,48 @@
+Program.Sub.ScreenSU.Start
+Program.Sub.ScreenSU.End
+
+Program.Sub.Preflight.Start
+
+Program.Sub.Preflight.End
+
+Program.Sub.Main.Start
+'09-08-10
+'JCT
+'U of Western Ontario
+'Order Header script 1 hook =11910
+F.ODBC.Connection!Con.OpenConnection(V.Ambient.PDSN,V.Ambient.puser,V.Ambient.PPass)
+
+
+'11560 populate hook
+F.Intrinsic.Control.If(V.Caller.Hook,=,11560)
+	V.Passed.000201.Set("New SC")
+	V.Passed.000060.Set("Speed Code")
+
+F.Intrinsic.Control.ElseIf(V.Caller.Hook,=,11910)
+'203100 - User Value Table Maint For Sales Orders
+'Parameter:Header/Line Flag,UserField1Label,UserField2Label,UserField3Label,UserField4Label,UserField5Label,Mode,DefaultUserField,DefaultCustomer,DefaultShipto,DefaultPart,DefaultLocation
+'v.passed.000006=customer
+
+
+V.Local.sParameters.Declare(String)
+
+F.Intrinsic.String.Concat("H!*!!*!!*!!*!!*!!*!V!*!!*!",V.Passed.000006,"!*!!*!!*!",V.Local.sParameters)
+'V.Local.sParameters.Set("H!*!!*!!*!!*!!*!!*!V!*!cust!*!!*!!*!")
+F.Global.General.CallWrapperAsync(203100,V.Local.sParameters)
+
+F.Intrinsic.Control.EndIf
+
+F.Intrinsic.Control.CallSub(Unload)
+
+
+Program.Sub.Main.End
+
+Program.Sub.Unload.Start
+
+
+F.ODBC.Connection!Con.Close
+F.Intrinsic.Control.End
+
+Program.Sub.Unload.End
+
+
